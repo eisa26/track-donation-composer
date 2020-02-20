@@ -1,0 +1,95 @@
+/**
+ * Write your model definitions here
+ */
+
+namespace org.global.citizens.net
+
+enum Status{
+  o INITIALSTATE
+  o GLOBALCITIZENREVIEW
+  o GOVORGREVIEW
+  o PROPOSALFUNDED
+}
+
+enum FundingType{
+  o WEEKLY
+  o MONTHLY
+  o SEMIANNUALY
+  o ANNUALY
+}
+enum FundingStatus{
+  o COMPLETE
+  o INCOMPLETE
+}
+
+enum MessageStatus{
+  o NOTREVIEWED
+  o REVIEWED
+}
+
+concept Funding {
+  o FundingType fundingType  
+  o Integer nextFundingDueInDays
+  o Double approvedFunding
+  o Double totalFundsReceived
+  o Double fundsPerInstallment
+  --> GovOrg govOrgId
+}
+
+asset ProjectPledge identified by pledgeId {
+  o String pledgeId
+  o String name
+  o String decription
+  o Double fundsRequired
+  o Status status
+  --> AidOrg aidOrg
+  o Funding[] funds
+}
+
+abstract participant User {
+  --> ProjectPledge[] projectPledge
+}
+
+participant GovOrg identified by govOrgId extends User {
+  o String govOrgId
+  --> ProjectPledge[] fundedPledges
+}
+
+participant AidOrg identified by aidOrgId extends User {
+  o String aidOrgId
+}
+
+participant GlobalCitizen identified by citizenId extends User {
+  o String citizenId
+}
+
+transaction CreateProjectPledge {
+  o String pledgeId
+  o String name
+  o String decription
+  o Double fundsRequired
+  --> AidOrg aidOrg
+}
+
+transaction SendPledgeToGlobalCitizen {
+  --> GlobalCitizen citizenId
+  --> ProjectPledge pledgeId
+}
+
+transaction SendPledgeToGovOrg {
+  --> GovOrg[] govOrg
+  --> ProjectPledge pledgeId
+}
+
+transaction UpdatePledge {
+  --> GovOrg govOrgId
+  --> ProjectPledge pledgeId
+  o FundingType fundingType
+  o Double approvedFunding
+  o Double fundsPerInstallment
+}
+
+transaction TransferFunds {
+  --> GovOrg govOrgId
+  --> ProjectPledge pledgeId
+}
