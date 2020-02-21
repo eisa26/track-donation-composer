@@ -10,6 +10,10 @@ enum Status{
   o GOVORGREVIEW
   o PROPOSALFUNDED
 }
+enum PaymentInformation{
+  o CreditCard
+  o PayPal
+}
 
 enum FundingType{
   o WEEKLY
@@ -61,6 +65,14 @@ participant Charity identified by charityId extends User {
 
 participant GlobalCitizen identified by citizenId extends User {
   o String citizenId
+  o String Fname
+  o String Lname 
+  o String email
+  o Double PhoneNo
+  o FundingType fundingType  
+  o PaymentInformation paymentInformation
+  o Double creditCardNo
+
 }
 
 transaction CreateProjectPledge {
