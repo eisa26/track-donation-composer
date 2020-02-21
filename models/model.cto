@@ -33,7 +33,7 @@ concept Funding {
   o Double approvedFunding
   o Double totalFundsReceived
   o Double fundsPerInstallment
-  --> GovOrg govOrgId
+  --> Monetaryfound monetaryfoundId
 }
 
 asset ProjectPledge identified by pledgeId {
@@ -42,7 +42,7 @@ asset ProjectPledge identified by pledgeId {
   o String decription
   o Double fundsRequired
   o Status status
-  --> AidOrg aidOrg
+  --> Charity charity
   o Funding[] funds
 }
 
@@ -50,13 +50,13 @@ abstract participant User {
   --> ProjectPledge[] projectPledge
 }
 
-participant GovOrg identified by govOrgId extends User {
-  o String govOrgId
+participant Monetaryfound identified by monetaryfoundId extends User {
+  o String monetaryfoundId
   --> ProjectPledge[] fundedPledges
 }
 
-participant AidOrg identified by aidOrgId extends User {
-  o String aidOrgId
+participant Charity identified by charityId extends User {
+  o String charityId
 }
 
 participant GlobalCitizen identified by citizenId extends User {
@@ -68,7 +68,7 @@ transaction CreateProjectPledge {
   o String name
   o String decription
   o Double fundsRequired
-  --> AidOrg aidOrg
+  --> Charity charity
 }
 
 transaction SendPledgeToGlobalCitizen {
@@ -76,13 +76,13 @@ transaction SendPledgeToGlobalCitizen {
   --> ProjectPledge pledgeId
 }
 
-transaction SendPledgeToGovOrg {
-  --> GovOrg[] govOrg
+transaction SendPledgeToMonetaryfound {
+  --> Monetaryfound[] monetaryfound
   --> ProjectPledge pledgeId
 }
 
 transaction UpdatePledge {
-  --> GovOrg govOrgId
+  --> Monetaryfound monetaryfoundId
   --> ProjectPledge pledgeId
   o FundingType fundingType
   o Double approvedFunding
@@ -90,6 +90,6 @@ transaction UpdatePledge {
 }
 
 transaction TransferFunds {
-  --> GovOrg govOrgId
+  --> Monetaryfound monetaryfoundId
   --> ProjectPledge pledgeId
 }
