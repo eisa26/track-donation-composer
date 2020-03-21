@@ -2,12 +2,12 @@
  * Write your model definitions here
  */
 
-namespace org.global.citizens.net
+namespace org.block.track.net
 
 enum Status{
   o INITIALSTATE
   o GLOBALCITIZENREVIEW
-  o GOVORGREVIEW
+  o MonFundREVIEW
   o PROPOSALFUNDED
 }
 enum PaymentInformation{
@@ -37,8 +37,15 @@ concept Funding {
   o Double approvedFunding
   o Double totalFundsReceived
   o Double fundsPerInstallment
-  --> Monetaryfound monetaryfoundId
+  --> MonFund MonFundId
 }
+
+ asset SendMoney identified by MId{
+  o String MId 
+  -->ProjectPledge pledgeId  
+  o Double amount 
+
+} 
 
 asset ProjectPledge identified by pledgeId {
   o String pledgeId
@@ -46,25 +53,17 @@ asset ProjectPledge identified by pledgeId {
   o String decription
   o Double fundsRequired
   o Status status
-  --> Charity charity
+  --> Charity Charity
   o Funding[] funds
 }
 
 abstract participant User {
   --> ProjectPledge[] projectPledge
 }
-
-participant Monetaryfound identified by monetaryfoundId extends User {
-  o String monetaryfoundId
-  --> ProjectPledge[] fundedPledges
+abstract participant User1 {
+ -->SendMoney []  sendMoney optional
 }
-
-participant Charity identified by charityId extends User {
-  o String charityId
-}
-
-participant GlobalCitizen identified by citizenId extends User {
-  o String citizenId
+participant Doner identified by email extends User1{
   o String Fname
   o String Lname 
   o String email
@@ -72,7 +71,20 @@ participant GlobalCitizen identified by citizenId extends User {
   o FundingType fundingType  
   o PaymentInformation paymentInformation
   o Double creditCardNo
+  o Double paypaldN
+}
+participant MonFund identified by MonFundId extends User {
+  o String MonFundId
+  --> ProjectPledge[] fundedPledges
+  --> SendMoney MId 
+}
 
+participant Charity identified by CharityId extends User {
+  o String CharityId
+}
+
+participant GlobalCitizen identified by citizenId extends User {
+  o String citizenId
 }
 
 transaction CreateProjectPledge {
@@ -80,7 +92,7 @@ transaction CreateProjectPledge {
   o String name
   o String decription
   o Double fundsRequired
-  --> Charity charity
+  --> Charity Charity
 }
 
 transaction SendPledgeToGlobalCitizen {
@@ -88,20 +100,27 @@ transaction SendPledgeToGlobalCitizen {
   --> ProjectPledge pledgeId
 }
 
-transaction SendPledgeToMonetaryfound {
-  --> Monetaryfound[] monetaryfound
+transaction SendPledgeToMonFund {
+  --> MonFund[] MonFund
   --> ProjectPledge pledgeId
 }
 
 transaction UpdatePledge {
-  --> Monetaryfound monetaryfoundId
+  --> MonFund MonFundId
   --> ProjectPledge pledgeId
   o FundingType fundingType
   o Double approvedFunding
   o Double fundsPerInstallment
 }
 
+transaction SendMoneyToMonFund {
+  --> MonFund  MonFundId
+  --> SendMoney MId 
+  --> SendMoney [] amount
+
+}
+
 transaction TransferFunds {
-  --> Monetaryfound monetaryfoundId
+  --> MonFund MonFundId
   --> ProjectPledge pledgeId
 }
