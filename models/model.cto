@@ -12,7 +12,7 @@ enum Status{
 }
 enum PaymentInformation{
   o CreditCard
-  o PayPal
+
 }
 
 enum FundingType{
@@ -39,12 +39,11 @@ concept Funding {
   o Double fundsPerInstallment
   --> MonFund MonFundId
 }
-
  asset SendMoney identified by MId{
   o String MId 
-  -->ProjectPledge pledgeId  
-  o Double amount 
-
+  o Double Amount 
+  -->Doner Doner
+  --> ProjectPledge pledgeId
 } 
 
 asset ProjectPledge identified by pledgeId {
@@ -53,30 +52,32 @@ asset ProjectPledge identified by pledgeId {
   o String decription
   o Double fundsRequired
   o Status status
-  --> Charity Charity
+  --> Charity Charity 
   o Funding[] funds
 }
 
 abstract participant User {
-  --> ProjectPledge[] projectPledge
+  --> ProjectPledge[] projectPledge 
 }
 abstract participant User1 {
- -->SendMoney []  sendMoney optional
+  -->SendMoney []  sendMoney 
+
 }
 participant Doner identified by email extends User1{
   o String Fname
   o String Lname 
   o String email
   o Double PhoneNo
+  o String password 
   o FundingType fundingType  
   o PaymentInformation paymentInformation
   o Double creditCardNo
-  o Double paypaldN
+
 }
 participant MonFund identified by MonFundId extends User {
-  o String MonFundId
+  o String MonFundId 
   --> ProjectPledge[] fundedPledges
-  --> SendMoney MId 
+  --> SendMoney MId optional
 }
 
 participant Charity identified by CharityId extends User {
@@ -87,12 +88,13 @@ participant GlobalCitizen identified by citizenId extends User {
   o String citizenId
 }
 
+
 transaction CreateProjectPledge {
   o String pledgeId
   o String name
   o String decription
   o Double fundsRequired
-  --> Charity Charity
+  --> Charity Charity  
 }
 
 transaction SendPledgeToGlobalCitizen {
@@ -101,7 +103,7 @@ transaction SendPledgeToGlobalCitizen {
 }
 
 transaction SendPledgeToMonFund {
-  --> MonFund[] MonFund
+  --> MonFund [] MonFund
   --> ProjectPledge pledgeId
 }
 
@@ -113,11 +115,16 @@ transaction UpdatePledge {
   o Double fundsPerInstallment
 }
 
+transaction CreateSendMoney{
+  o String MId 
+  o Double Amount 
+  --> ProjectPledge pledgeId
+  -->Doner Doner 
+}
 transaction SendMoneyToMonFund {
-  --> MonFund  MonFundId
   --> SendMoney MId 
-  --> SendMoney [] amount
-
+  --> MonFund  MonFundId
+  o Double Amount
 }
 
 transaction TransferFunds {
