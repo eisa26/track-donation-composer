@@ -19,11 +19,18 @@
  * Access control rules for mynetwork
  */
 
+rule Doner {
+    description: "Allow the client full access"
+    participant: "org.block.track.net.Doner"
+    operation: READ
+    resource: "org.block.track.net.*"
+    action: ALLOW
+}
 rule Default {
     description: "Allow all participants access to all resources"
     participant: "ANY"
     operation: ALL
-    resource: "org.global.citizens.net.*"
+    resource: "org.block.track.net.*"
     action: ALLOW
 }
 
